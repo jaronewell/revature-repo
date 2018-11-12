@@ -1,0 +1,21 @@
+2018-11-12 16:20:19 INFO  Main:14 - this is info
+2018-11-12 16:20:19 INFO  Main:17 - this is info
+2018-11-12 16:20:19 ERROR Main:18 - error
+java.lang.Exception
+	at com.banking.JavaLog4j.main(JavaLog4j.java:18)
+2018-11-12 16:20:19 FATAL Main:19 - fatal message
+2018-11-12 16:20:19 WARN  Main:20 - warning
+2018-11-12 16:46:30 INFO  Main:14 - this is info
+2018-11-12 16:46:30 INFO  Main:17 - this is info
+2018-11-12 16:46:30 ERROR Main:18 - error
+java.lang.Exception
+	at com.banking.JavaLog4j.main(JavaLog4j.java:18)
+2018-11-12 16:46:30 FATAL Main:19 - fatal message
+2018-11-12 16:46:30 WARN  Main:20 - warning
+2018-11-12 16:48:22 INFO  Main:130 - $5,000 has been deposited in account 42153365
+2018-11-12 16:48:41 INFO  Main:116 - $2,000 has been withdrawn from account 42153365
+2018-11-12 16:51:55 INFO  Main:130 - $2,000 has been deposited in account 42153365
+2018-11-12 16:52:03 INFO  Main:130 - $40,000 has been deposited in account 42153365
+2018-11-12 16:52:09 INFO  Main:116 - $2,000 has been withdrawn from account 42153365
+2018-11-12 16:54:42 INFO  Main:116 - $20,000 has been withdrawn from account 42153365
+2018-11-12 16:55:52 INFO  Main:130 - $2 has been deposited in account 42153365

@@ -330,7 +330,7 @@ public class EvaluationService {
 				}
 			}
 
-			return 0;
+			return -1;
 		}
 
 		public BinarySearch(List<T> sortedList) {
@@ -754,7 +754,7 @@ public class EvaluationService {
 
 		int sum = 0;
 
-		for (int j = 0; j < i; j++) {
+		for (int j = 1; j < i; j++) {
 			for (int k : set) {
 				if (j % k == 0) {
 					sum += j;
