@@ -20,7 +20,7 @@
 **/.recommenders/**
 **/Servers
 **/.springBeans
-**/.properties
+**/datasource.properties
 
 #IDEA
 **/.idea/

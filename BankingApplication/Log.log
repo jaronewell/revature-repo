@@ -1,21 +1,28 @@
-2018-11-12 16:20:19 INFO  Main:14 - this is info
-2018-11-12 16:20:19 INFO  Main:17 - this is info
-2018-11-12 16:20:19 ERROR Main:18 - error
-java.lang.Exception
-	at com.banking.JavaLog4j.main(JavaLog4j.java:18)
-2018-11-12 16:20:19 FATAL Main:19 - fatal message
-2018-11-12 16:20:19 WARN  Main:20 - warning
-2018-11-12 16:46:30 INFO  Main:14 - this is info
-2018-11-12 16:46:30 INFO  Main:17 - this is info
-2018-11-12 16:46:30 ERROR Main:18 - error
-java.lang.Exception
-	at com.banking.JavaLog4j.main(JavaLog4j.java:18)
-2018-11-12 16:46:30 FATAL Main:19 - fatal message
-2018-11-12 16:46:30 WARN  Main:20 - warning
-2018-11-12 16:48:22 INFO  Main:130 - $5,000 has been deposited in account 42153365
-2018-11-12 16:48:41 INFO  Main:116 - $2,000 has been withdrawn from account 42153365
-2018-11-12 16:51:55 INFO  Main:130 - $2,000 has been deposited in account 42153365
-2018-11-12 16:52:03 INFO  Main:130 - $40,000 has been deposited in account 42153365
-2018-11-12 16:52:09 INFO  Main:116 - $2,000 has been withdrawn from account 42153365
-2018-11-12 16:54:42 INFO  Main:116 - $20,000 has been withdrawn from account 42153365
-2018-11-12 16:55:52 INFO  Main:130 - $2 has been deposited in account 42153365
+2018-11-14 09:34:09 INFO  Main:130 - $5,000 has been deposited in account 87117341
+2018-11-14 09:41:38 INFO  Main:149 - $200 has been transferred from account 87117341 to account 10481471
+2018-11-14 09:51:47 INFO  Main:116 - $2,000 has been withdrawn from account 87117341
+2018-11-14 09:52:05 INFO  Main:149 - $1,000 has been transferred from account 87117341 to account 91998887
+2018-11-14 15:18:49 INFO  Main:130 - $250 has been deposited in account 87117341
+2018-11-14 15:19:00 INFO  Main:116 - $500 has been withdrawn from account 87117341
+2018-11-14 15:19:39 INFO  Main:149 - $500 has been transferred from account 87117341 to account 10481471
+2018-11-14 15:20:45 INFO  Main:114 - Account 87117341 has been cancelled.
+2018-11-14 15:34:50 INFO  Main:130 - $6,000 has been deposited in account 58885598
+2018-11-15 12:40:42 INFO  Main:114 - Account 10481471 has been cancelled.
+2018-11-15 12:40:49 INFO  Main:114 - Account 91998887 has been cancelled.
+2018-11-15 12:40:56 INFO  Main:114 - Account 58885598 has been cancelled.
+2018-11-15 12:41:01 INFO  Main:114 - Account 41078362 has been cancelled.
+2018-11-15 12:41:04 INFO  Main:114 - Account 43177704 has been cancelled.
+2018-11-15 12:41:15 INFO  Main:130 - $1,000,000 has been deposited in account 72548593
+2018-11-17 13:00:10 INFO  Main:130 - $5,000 has been deposited in account 29877505
+2018-11-17 13:00:13 INFO  Main:116 - $2,000 has been withdrawn from account 29877505
+2018-11-17 13:01:18 INFO  Main:149 - $200,000 has been transferred from account 72548593 to account 50276369
+2018-11-18 16:41:09 INFO  Main:114 - Account 72548593 has been cancelled.
+2018-11-18 16:41:23 INFO  Main:147 - $40,000 has been deposited in account 29877505
+2018-11-18 16:43:24 INFO  Main:166 - $50,000 has been transferred from account 50276369 to account 38453090
+2018-11-18 16:45:03 INFO  Main:147 - $400 has been deposited in account 78503037
+2018-11-18 17:26:23 INFO  Main:147 - $5,000 has been deposited in account 21965255
+2018-11-18 20:50:09 INFO  Main:147 - $500 has been deposited in account 51795263
+2018-11-18 20:50:28 INFO  Main:133 - $20.75 has been withdrawn from account 51795263
+2018-11-18 22:38:30 INFO  Main:147 - $5,000 has been deposited in account 53663141
+2018-11-18 22:56:29 INFO  Main:166 - $2,000 has been transferred from account 53663141 to account 21056139
+2018-11-18 22:58:37 INFO  Main:166 - $200 has been transferred from account 53663141 to account 21056139

@@ -730,13 +730,12 @@ public class EvaluationService {
 		}else {
 			givenTime = (LocalDateTime) given;
 		}
-		
 		Duration d = Duration.ofSeconds(gigasecond);
 		LocalDateTime newTime = givenTime.plus(d);
 		
 		return newTime;
 	}
-
+	
 	/**
 	 * 18. Given a number, find the sum of all the unique multiples of particular
 	 * numbers up to but not including that number.

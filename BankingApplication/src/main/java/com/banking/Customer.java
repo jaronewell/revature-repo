@@ -9,6 +9,7 @@ public class Customer extends User {
 	 * 
 	 */
 	private static final long serialVersionUID = -4870562534874301188L;
+	private int customerID;
 	private String firstName;
 	private String lastName;
 	private String phoneNumber;
@@ -17,10 +18,29 @@ public class Customer extends User {
 	private LocalDate dob;
 	private String ssn;
 	private ArrayList<BankAccount> accounts;
-	private ArrayList<Application> pendingApplications;
+	private Application pendingApplication;
+	private boolean applicationDenied;
+	private boolean applicationApproved;
+
+	public Customer(int customerID, String firstName, String lastName, String phoneNumber, String address, String email, LocalDate dob,
+			String ssn, String username, String password) {
+		super();
+		this.setCustomerID(customerID);
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.phoneNumber = phoneNumber;
+		this.address = address;
+		this.email = email;
+		this.dob = dob;
+		this.ssn = ssn;
+		setUsername(username);
+		setPassword(password);
+		this.accounts = new ArrayList<BankAccount>();
+		setType(UserType.Customer);
+	}
 
 	public Customer(String firstName, String lastName, String phoneNumber, String address, String email, LocalDate dob,
-			String ssn) {
+			String ssn, String username, String password) {
 		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -29,16 +49,25 @@ public class Customer extends User {
 		this.email = email;
 		this.dob = dob;
 		this.ssn = ssn;
+		setUsername(username);
+		setPassword(password);
 		this.accounts = new ArrayList<BankAccount>();
 		setType(UserType.Customer);
-		this.pendingApplications = new ArrayList<Application>();
+	}
+	
+	public LocalDate getDob() {
+		return dob;
+	}
 
+	public void setDob(LocalDate dob) {
+		this.dob = dob;
 	}
 
 	@Override
 	public String toString() {
-		return "Customer [firstName=" + firstName + ", lastName=" + lastName + ", phoneNumber=" + phoneNumber
-				+ ", address=" + address + ", email=" + email + ", dob=" + dob + ", ssn=" + ssn + ", username=" + getUsername() + ", password=" + getPassword() + "]";
+		return "Name: " + firstName + " " + lastName + "  PhoneNumber: " + phoneNumber + "  Address: " + address
+				+ "  Email: " + email + "  DOB: " + dob + "  SSN: " + ssn + "  Username: " + getUsername()
+				+ "  Password: " + getPassword();
 	}
 
 	public String getFirstName() {
@@ -99,6 +128,15 @@ public class Customer extends User {
 
 	public void applyForAccount() {
 
+		if (pendingApplication != null) {
+			System.out.println(
+					"You already have a pending application. Please wait for that application to be approved or denied before applying for a new account.");
+			return;
+		}
+
+		applicationDenied = false;
+		applicationApproved = false;
+
 		Application newApplication = null;
 		boolean validInput = false;
 
@@ -108,9 +146,9 @@ public class Customer extends User {
 			System.out.println("2. Joint");
 
 			String choice = Main.input.nextLine();
-			
+
 			switch (choice) {
-			case "quit":
+			case "back":
 				Main.currentUser = null;
 				return;
 			case "1":
@@ -118,7 +156,11 @@ public class Customer extends User {
 				validInput = true;
 				break;
 			case "2":
-				newApplication = new Application(this, selectJointCustomer());
+				Customer jointCustomer = selectJointCustomer();
+				if(jointCustomer != null)
+					newApplication = new Application(this, jointCustomer);
+				else
+					System.out.println("Something was wrong with your application. Please try again.");
 				validInput = true;
 				break;
 			default:
@@ -128,7 +170,11 @@ public class Customer extends User {
 		}
 
 		Main.applicationList.add(newApplication);
-		this.pendingApplications.add(newApplication);
+		this.setPendingApplication(newApplication);
+
+		if (newApplication.getJointCustomer() != null) {
+			newApplication.getJointCustomer().setPendingApplication(newApplication);
+		}
 		Main.writeObject(Main.applicationFile, Main.applicationList);
 	}
 
@@ -149,16 +195,22 @@ public class Customer extends User {
 		}
 
 		// Print the names of each registered customer other than the current customer
+
+		ArrayList<Customer> availableJointCustomers = new ArrayList<Customer>();
+		int numCustomers = 0;
+
 		for (int i = 0; i < Main.customerList.size(); i++) {
 			if (i != thisIndex) {
 				Customer c = Main.customerList.get(i);
-				System.out.println(i + 1 + ". " + c.getFirstName() + " " + c.getLastName());
+				availableJointCustomers.add(c);
+				System.out.println(numCustomers + 1 + ". " + c.getFirstName() + " " + c.getLastName());
+				numCustomers++;
 			}
 		}
 
 		int index;
-		
-		while (true) {
+
+		do {
 			System.out.print(
 					"Enter the number of the customer that would be the joint customer or 0 to register a new customer: ");
 			String choice = Main.input.nextLine();
@@ -171,58 +223,76 @@ public class Customer extends User {
 						"Please be sure to enter the index for the customer you would like for the joint customer.");
 				continue;
 			}
-		}
+		} while (true);
+
+		
 		if (index == 0)
 			return Main.newCustomer();
-		else if (index < 0 || index > Main.customerList.size() || index == thisIndex)
+		else if (index < 0 || index > availableJointCustomers.size())
 			System.out.println(
 					"That is not a valid number. Please enter the number of one of the available customers or 0 to register a new customer.");
 		else
-			return Main.customerList.get(index - 1);
+			return availableJointCustomers.get(index - 1);
 
 		return null;
-	}
-
-	public ArrayList<Application> getPendingApplications() {
-		return pendingApplications;
-	}
-
-	public void setPendingApplications(ArrayList<Application> pendingApplications) {
-		this.pendingApplications = pendingApplications;
 	}
 
 	@Override
 	public void showOptions() {
 
+		System.out.println();
+		System.out.println("Welcome " + firstName + " " + lastName);
+
+		if (applicationDenied) {
+			System.out.println();
+			System.out.println("Your application was denied. You may try to apply for another account.");
+			System.out.println();
+			applicationDenied = false;
+		} else if (applicationApproved) {
+			System.out.println();
+			System.out.println("Your application has been approved. You may now view your accounts and make changes.");
+			System.out.println();
+			applicationApproved = false;
+		}
+
 		while (Main.currentUser == this) {
 			if (this.accounts.isEmpty()) {
-				System.out.println("You currently have no bank accounts and " + pendingApplications.size() + " pending applications. Would you like to apply for an account now? ");
-				System.out.println("1. Yes, apply for a new account.");
-				System.out.println("2. No, don't apply for an account now.");
-				String choice = Main.input.nextLine();
+				if (this.pendingApplication == null) {
+					System.out.println(
+							"You currently have no bank accounts. Would you like to apply for an account now? ");
+					System.out.println("1. Yes, apply for a new account.");
+					System.out.println("2. No, don't apply for an account now.");
+					String choice = Main.input.nextLine();
 
-				switch (choice) {
-				case "quit":
+					switch (choice) {
+					case "":
+						Main.currentUser = null;
+						break;
+					case "1":
+						applyForAccount();
+						break;
+					case "2":
+						Main.currentUser = null;
+						return;
+					}
+				} else {
+					System.out.println();
+					System.out.println(
+							"You currently have a pending application. Please check later to see if your application has been approved.");
+					System.out.println();
 					Main.currentUser = null;
-					break;
-				case "1":
-					applyForAccount();
-					break;
-				case "2":
-					Main.currentUser = null;
-					return;
 				}
-
 			} else {
+				System.out.println();
 				System.out.println(
-						"Please enter the number of the choice you would like or type \"quit\" to return to user selection.");
+						"Please enter the number of the choice you would like or type \"back\" to return to user selection.");
 				System.out.println("1. Apply for a new account");
 				System.out.println("2. View Accounts");
 
 				String choice = Main.input.nextLine();
 
 				switch (choice) {
-				case "quit":
+				case "back":
 					Main.currentUser = null;
 					break;
 				case "1":
@@ -232,7 +302,7 @@ public class Customer extends User {
 					showAccounts();
 					break;
 				default:
-					System.out.println("That is not a valid input please enter 1, 2, or \"quit\".");
+					System.out.println("That is not a valid input please enter 1, 2, or \"back\".");
 					break;
 				}
 			}
@@ -248,13 +318,14 @@ public class Customer extends User {
 			System.out.println(i + 1 + ". " + account.cleanString());
 		}
 
-		// loop will continue to run until the user quits
+		// loop will continue to run until the user s
 		while (true) {
-			System.out.print("Enter the number of the account you would like to edit or type \"quit\" to quit: ");
+			System.out.println();
+			System.out.print("Enter the number of the account you would like to edit or type \"back\" to go back: ");
 
 			String choice = Main.input.nextLine();
 
-			if (choice.equals("quit"))
+			if (choice.equals("back"))
 				return;
 
 			int index;
@@ -272,10 +343,10 @@ public class Customer extends User {
 			} else {
 				BankAccount account = accounts.get(index - 1);
 
-				// loop will continue to run until the user quits
+				// loop will continue to run until the user goes back
 				while (true) {
-					System.out.println(
-							"Select an option below or type \"back\" to return to the acccount selection or \"quit\" to quit.");
+					System.out.println();
+					System.out.println("Select an option below or type \"back\" to return to the acccount selection.");
 					System.out.println("1. Check Account Balance");
 					System.out.println("2. Deposit");
 					System.out.println("3. Withdraw");
@@ -284,9 +355,6 @@ public class Customer extends User {
 					choice = Main.input.nextLine();
 
 					switch (choice) {
-					case "quit":
-						Main.currentUser = null;
-						return;
 					case "back":
 						return;
 					case "1":
@@ -297,10 +365,10 @@ public class Customer extends User {
 						double amount = 0;
 						try {
 							amount = Double.parseDouble(Main.input.nextLine());
-						}catch(Exception e) {
+						} catch (Exception e) {
 							System.out.println("That input is invalid please be sure to enter a decimal number only.");
 						}
-						if(amount != 0)
+						if (amount != 0)
 							account.deposit(amount);
 						break;
 					case "3":
@@ -308,23 +376,32 @@ public class Customer extends User {
 						amount = 0;
 						try {
 							amount = Double.parseDouble(Main.input.nextLine());
-						}catch(Exception e) {
+						} catch (Exception e) {
 							System.out.println("That input is invalid please be sure to enter a decimal number only.");
 						}
-						if(amount != 0)
+						if (amount != 0)
 							account.withdraw(amount);
 						break;
 					case "4":
+						if (Main.accountList.size() == 1) {
+							System.out.println("There are no other accounts to transfer to.");
+							break;
+						}
+
+						// select the account to transfer the money to
+						BankAccount transferAccount = chooseAccount(account);
 						System.out.println("How much money would you like to transfer? ");
 						amount = 0;
 						try {
 							amount = Double.parseDouble(Main.input.nextLine());
-						}catch(Exception e) {
+						} catch (Exception e) {
 							System.out.println("That input is invalid please be sure to enter a decimal number only.");
 						}
-						BankAccount transferAccount = chooseAccount(account);
 						if (transferAccount != null && amount != 0)
 							account.transfer(amount, transferAccount);
+						break;
+					default:
+						System.out.println("That is not a valid input.");
 						break;
 					}
 
@@ -339,12 +416,8 @@ public class Customer extends User {
 	// account that is used since it cannot be transferred to itself
 	private BankAccount chooseAccount(BankAccount currentAccount) {
 
-		if (accounts.size() == 1) {
-			System.out.println("There are no other accounts to transfer to.");
-			return null;
-		}
-
-		System.out.println("Please enter the number of the account that you would like to transfer to or 0 to go back: ");
+		System.out.println(
+				"Please enter the account number of the account that you would like to transfer to or \"back\" to go back: ");
 		while (true) {
 			System.out.println();
 			int thisIndex = accounts.indexOf(currentAccount);
@@ -353,29 +426,79 @@ public class Customer extends User {
 			for (int i = 0; i < accounts.size(); i++) {
 				if (i != thisIndex) {
 					BankAccount b = accounts.get(i);
-					System.out.println(i + 1 + ". Account Number: " + b.getAccountNumber() + "    Account Balance: " + b.getAccountBalance());
+					System.out.println(b.cleanString());
+//					System.out.println(i + 1 + ". Account Number: " + b.getAccountNumber() + "    Account Balance: "
+//							+ b.getAccountBalance());
 				}
 			}
 
-			int choice = Main.input.nextInt();
-			Main.input.nextLine();
-			
-			if (choice == 0)
-				return null;
-			
-			if (choice < 0 || choice > Main.accountList.size() || choice == thisIndex)
-				System.out.println(
-						"That is not a valid number. Please enter the number of one of the available accounts or 0 to choose none.");
-			else
-				return accounts.get(choice - 1);
+			String choice = Main.input.nextLine();
 
+			if (choice.equals("back"))
+				return null;
+
+			long accountNumber = 0;
+
+			try {
+				accountNumber = Long.parseLong(choice);
+			} catch (Exception e) {
+				System.out.println("That input is invalid. Please only enter numbers or \"back\". ");
+			}
+
+			BankAccount accountToTransfer = findAccount(accountNumber);
+
+			if (accountToTransfer != null && accountToTransfer.equals(currentAccount)) {
+				System.out
+						.println("You can't transfer to the same account. You must type in a differnt account number.");
+				return null;
+			}
+
+			return accountToTransfer;
 		}
 	}
 
-	
-	//Adds an account to the customer's list of accounts
+	// Adds an account to the customer's list of accounts
 	public void addAccount(BankAccount account) {
 		accounts.add(account);
 	}
 
+	public boolean isApplicationDenied() {
+		return applicationDenied;
+	}
+
+	public void setApplicationDenied(boolean applicationDenied) {
+		this.applicationDenied = applicationDenied;
+	}
+
+	public boolean isApplicationApproved() {
+		return applicationApproved;
+	}
+
+	public void setApplicationApproved(boolean applicationApproved) {
+		this.applicationApproved = applicationApproved;
+	}
+
+	public void removeAccount(BankAccount account) {
+		accounts.remove(account);
+	}
+
+	public Application getPendingApplication() {
+		return pendingApplication;
+	}
+
+	public void setPendingApplication(Application pendingApplication) {
+		this.pendingApplication = pendingApplication;
+	}
+
+	public void clearAccounts() {
+		accounts.clear();
+	}
+
+	public int getCustomerID() {
+		return customerID;
+	}
+
+	public void setCustomerID(int customerID) {
+		this.customerID = customerID;
+	}
 }

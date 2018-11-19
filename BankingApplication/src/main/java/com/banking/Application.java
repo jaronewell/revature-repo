@@ -1,7 +1,6 @@
 package com.banking;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 public class Application implements Serializable {
 
@@ -10,6 +9,15 @@ public class Application implements Serializable {
 	 */
 	private static final long serialVersionUID = 3029590756484476997L;
 	private Customer customer;
+	private int applicationID;
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+
 	private boolean isJoint;
 	private Customer jointCustomer;
 	private StatusState status;
@@ -41,28 +49,41 @@ public class Application implements Serializable {
 			newAccount = new BankAccount(customer, jointCustomer);
 
 		// After the application is approved the new account is added to the list of
-		// accounts
-		ArrayList<BankAccount> accountList = customer.getAccounts();
-		accountList.add(newAccount);
-		customer.setAccounts(accountList);
+		// accounts, the pending application is removed, and the user is notified of the approval
+		customer.addAccount(newAccount);
+		customer.setPendingApplication(null);
+		customer.setApplicationApproved(true);
 		
-		ArrayList<Application> customerPendingApplications = customer.getPendingApplications();
-		customerPendingApplications.remove(this);
-		customer.setPendingApplications(customerPendingApplications);
+		Main.accountDao.create(newAccount);
 		
 		Main.accountList.add(newAccount);
 		Main.writeObject(Main.accountFile, Main.accountList);
 		
-		//The pending application is removed from the customer's pending application list
-		ArrayList<Application> pendingApplications = customer.getPendingApplications();
-		pendingApplications.remove(this);
-		customer.setPendingApplications(pendingApplications);
 		Main.writeObject(Main.applicationFile, Main.applicationList);
+		customer.setApplicationApproved(true);
+		
+		//If there is a joint customer the joint customer also adds the new account and the pending
+		//application is removed
+		if(isJoint) {
+			jointCustomer.setApplicationApproved(true);
+			jointCustomer.addAccount(newAccount);
+			jointCustomer.setPendingApplication(null);
+		}
+	}
+
+	public Customer getJointCustomer() {
+		return jointCustomer;
+	}
+
+	public void setJointCustomer(Customer jointCustomer) {
+		this.jointCustomer = jointCustomer;
 	}
 
 	public void deny() {
 		setStatus(StatusState.Denied);
 		Main.writeObject(Main.applicationFile, Main.applicationList);
+		
+		customer.setApplicationDenied(true);
 	}
 
 	public StatusState getStatus() {
@@ -78,6 +99,14 @@ public class Application implements Serializable {
 	public String toString() {
 		return "Application [customer=" + customer + ", isJoint=" + isJoint + ", jointCustomer=" + jointCustomer
 				+ ", status=" + status + "]";
+	}
+
+	public int getApplicationID() {
+		return applicationID;
+	}
+
+	public void setApplicationID(int applicationID) {
+		this.applicationID = applicationID;
 	}
 
 }

@@ -12,6 +12,10 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import com.banking.User.UserType;
+import com.revature.dao.BankAccountDao;
+import com.revature.dao.BankAccountDaoPostgres;
+import com.revature.dao.CustomerDao;
+import com.revature.dao.CustomerDaoPostgres;
 
 public class Main {
 
@@ -21,20 +25,22 @@ public class Main {
 	public static ArrayList<Employee> employeeList;
 	public static ArrayList<BankAccount> accountList;
 	public static ArrayList<Application> applicationList;
+	public static BankAccountDao accountDao = new BankAccountDaoPostgres();
+	public static CustomerDao customerDao = new CustomerDaoPostgres();
+	
 
 	static String customerFile = "./BankingCustomers.txt";
 	static String employeeFile = "./BankingEmployees.txt";
-	static String adminFile = "./BankingAdmins.txt";
 	static String accountFile = "./BankingAccounts.txt";
 	static String applicationFile = "./BankingApplications.txt";
 
 	static Scanner input = new Scanner(System.in);
 
 	public static UserType getUserType() {
-		System.out.println("What type of user are you?");
+		System.out.println();
+		System.out.println("Are you a customer or employee?");
 		System.out.println("1. Customer");
 		System.out.println("2. Employee");
-		System.out.println("3. Admin");
 		boolean validInput = false;
 
 		while (!validInput) {
@@ -49,11 +55,9 @@ public class Main {
 				return UserType.Customer;
 			case "2":
 				return UserType.Employee;
-			case "3":
-				return UserType.Admin;
 			default:
 				System.out.print(
-						"That is not a valid choice. Please enter 1 for customer, 2 for employee, or 3 for admin: ");
+						"That is not a valid choice. Please enter 1 for customer or 2 for employee: ");
 			}
 		}
 		System.out.println();
@@ -86,6 +90,8 @@ public class Main {
 			username = input.nextLine();
 			if (nameIsTaken(username, customerList)) {
 				System.out.println("Sorry but that username has already been taken.");
+			} else if (username.equals("quit")) {
+				System.out.println("That is not a valid username.");
 			} else
 				valid = true;
 		}
@@ -183,16 +189,13 @@ public class Main {
 
 		LocalDate dob = LocalDate.of(year, month, day);
 
-		Customer customer = new Customer(firstName, lastName, phoneNumber, address, email, dob, ssn);
-
-		customer.setUsername(username);
-		customer.setPassword(password);
+		Customer customer = new Customer(firstName, lastName, phoneNumber, address, email, dob, ssn, username, password);
 
 		System.out.println("Your account has been created.");
 		System.out.println();
 
+		customerDao.create(customer);
 		customerList.add(customer);
-		currentUser = customer;
 		writeObject(customerFile, customerList);
 
 		return customer;
@@ -205,8 +208,8 @@ public class Main {
 		initializeLists();
 
 		System.out.println(
-				"Welcome to the banking application. Type in the number of the choice you would like or type \"back\" to return to the user selection or \"quit\" to end the application.");
-
+				"Welcome to Jaron's banking application. Type in the number of the choice you would like or type \"back\" to return to the user selection or \"quit\" to end the application.");
+		
 		while (running) {
 			while (currentUser == null) {
 				UserType type = getUserType();
@@ -226,7 +229,7 @@ public class Main {
 					case "back":
 						break;
 					case "1":
-						newCustomer();
+						currentUser = newCustomer();
 						break;
 					case "2":
 						login(customerList);
@@ -235,9 +238,10 @@ public class Main {
 						System.out.println(
 								"Please enter 1 if you are a new customer or 2 if you are an existing customer.");
 					}
-				} else if (type.equals(UserType.Employee)) {
+				} else if (type.equals(UserType.Employee) || type.equals(UserType.Admin)) {
 					System.out.println("1. New employee");
-					System.out.println("2. Existing employee");
+					System.out.println("2. New admin");
+					System.out.println("3. Existing employee/admin");
 					String choice = input.nextLine();
 
 					switch (choice) {
@@ -247,39 +251,19 @@ public class Main {
 					case "back":
 						break;
 					case "1":
-						newEmployee();
+						newEmployee(UserType.Employee);
 						break;
 					case "2":
+						newEmployee(UserType.Admin);
+						break;
+					case "3":
 						login(employeeList);
 						break;
 					default:
 						System.out.println(
-								"Please enter 1 if you are a new employee or 2 if you are an existing employee or type \"back\" to go back to the user selection or \"quit\" to end the application.");
-					}
-				} else {
-					System.out.println("1. New admin");
-					System.out.println("2. Existing admin");
-					String choice = input.nextLine();
-
-					switch (choice) {
-					case "quit":
-						running = false;
-						break;
-					case "back":
-						break;
-					case "1":
-						Employee e = newEmployee();
-						e.setType(UserType.Admin);
-						employeeList.add(e);
-						currentUser = e;
-						writeObject(employeeFile, employeeList);
-						break;
-					case "2":
-						login(employeeList);
-						break;
-					default:
+								"Please enter 1 if you are a new employee, 2 if you are a new admin, or 3 if you are an existing employee/admin.");
 						System.out.println(
-								"Please enter 1 if you are a new employee or 2 if you are an existing employee or type \"back\" to go back to the user selection or \"quit\" to end the application.");
+								"You may also type \"back\" to go back to the user selection or \"quit\" to end the application.");
 					}
 				}
 			}
@@ -289,11 +273,11 @@ public class Main {
 				System.out.println("You may log into a different account now or type \"quit\" to end the application.");
 			}
 		}
-		System.out.println("Thank you for using our banking application.");
+		System.out.println("Thank you for using Jaron's banking application.");
 	}
 
 	// Log in to account with username and password if existing user
-	private static Employee newEmployee() {
+	private static void newEmployee(UserType employeeType) {
 
 		String username = null, password;
 
@@ -316,15 +300,15 @@ public class Main {
 
 		Employee e = new Employee(username, password);
 
-		e.setType(UserType.Employee);
+		e.setType(employeeType);
 		employeeList.add(e);
 		currentUser = e;
 		writeObject(employeeFile, employeeList);
-
-		return e;
 	}
 
 	private static <T extends User> void login(ArrayList<T> userList) {
+
+		System.out.println();
 
 		boolean valid = false;
 
@@ -374,20 +358,27 @@ public class Main {
 		customerList = (ArrayList<Customer>) readObject(customerFile);
 		employeeList = (ArrayList<Employee>) readObject(employeeFile);
 		applicationList = (ArrayList<Application>) readObject(applicationFile);
-		accountList = (ArrayList<BankAccount>) readObject(accountFile);
+		//accountList = (ArrayList<BankAccount>) readObject(accountFile);
+		
+		customerList = (ArrayList<Customer>)customerDao.readAll();
+		accountList = (ArrayList<BankAccount>) accountDao.readAll();
 		
 		assignBankAccounts();
 	}
 
 	private static void assignBankAccounts() {
-		
-		//Checks each bank account and adds it to the correct customer list of accounts if the username matches
-		for(BankAccount account : accountList) {
-			for(Customer customer : customerList) {
-				if(account.getCustomer().getUsername().equals(customer.getUsername())){
+
+		// Checks each bank account and adds it to the correct customer list of accounts
+		// if the username matches
+		for (Customer customer : customerList) {
+			//make sure customer has no current accounts before adding serialized accounts
+			customer.clearAccounts();
+			
+			for (BankAccount account : accountList) {
+				if (account.getCustomer().getUsername().equals(customer.getUsername())) {
 					customer.addAccount(account);
-				}
-				else if(account.getJointCustomer() != null && account.getJointCustomer().getUsername().equals(customer.getUsername()))
+				} else if (account.getJointCustomer() != null
+						&& account.getJointCustomer().getUsername().equals(customer.getUsername()))
 					customer.addAccount(account);
 			}
 		}

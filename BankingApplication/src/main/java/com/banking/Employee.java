@@ -24,10 +24,20 @@ public class Employee extends User {
 
 	public void viewAccounts() {
 
+		if (Main.accountList.isEmpty()) {
+			System.out.println();
+			System.out.println("There are currently no opened accounts.");
+			System.out.println();
+			return;
+		}
 		if (getType().equals(UserType.Admin))
 			allowAccountChanges();
 		else
-			Main.printList(Main.accountList, "Bank Accounts");
+			// Print each bank account
+			for (int i = 0; i < Main.accountList.size(); i++) {
+				BankAccount b = Main.accountList.get(i);
+				System.out.println(i + 1 + ". " + b.cleanString());
+			}
 	}
 
 	private void allowAccountChanges() {
@@ -80,6 +90,13 @@ public class Employee extends User {
 					accountToEdit.withdraw(amount);
 				break;
 			case "4":
+				if (Main.accountList.size() == 1) {
+					System.out.println("There are no other accounts to transfer to.");
+					break;
+				}
+
+				// select the account to transfer the money to
+				BankAccount transferAccount = chooseTransferAccount(accountToEdit);
 				System.out.println("How much money would you like to transfer? ");
 				amount = 0;
 				try {
@@ -87,17 +104,76 @@ public class Employee extends User {
 				} catch (Exception e) {
 					System.out.println("That input is invalid please be sure to enter a decimal number only.");
 				}
-				BankAccount transferAccount = chooseAccount();
-				if(transferAccount.getAccountNumber() == accountToEdit.getAccountNumber())
-					System.out.println("A different account must be selected");
-				else if(transferAccount != null && amount > 0)
+				if (transferAccount != null && amount != 0)
 					accountToEdit.transfer(amount, transferAccount);
 				break;
 			case "5":
+				System.out.println();
+				System.out.println("Account " + accountToEdit.getAccountNumber() + " has been cancelled.");
+				System.out.println();
+				JavaLog4j.logger.info("Account " + accountToEdit.getAccountNumber() + " has been cancelled.");
+				removeAccountFromCustomers(accountToEdit);
+				Main.accountDao.deactivate(accountToEdit);
 				Main.accountList.remove(accountToEdit);
-				Main.writeObject(Main.accountFile, Main.accountFile);
-				break;
+				Main.writeObject(Main.accountFile, Main.accountList);
+				return;
 			}
+		}
+	}
+
+	private void removeAccountFromCustomers(BankAccount accountToEdit) {
+		for (Customer customer : Main.customerList) {
+			if (accountToEdit.getCustomer().getUsername().equals(customer.getUsername())) {
+				customer.removeAccount(accountToEdit);
+			}
+			if (accountToEdit.getJointCustomer() != null
+					&& accountToEdit.getJointCustomer().getUsername().equals(customer.getUsername())) {
+				customer.removeAccount(accountToEdit);
+			}
+		}
+
+	}
+
+	private BankAccount chooseTransferAccount(BankAccount currentAccount) {
+
+		System.out.println(
+				"Please enter the account number of the account that you would like to transfer to or \"back\" to go back: ");
+		while (true) {
+			System.out.println();
+			int thisIndex = Main.accountList.indexOf(currentAccount);
+
+			// Print each bank account other than the currently used account
+			for (int i = 0; i < Main.accountList.size(); i++) {
+				if (i != thisIndex) {
+					BankAccount b = Main.accountList.get(i);
+					System.out.println(b.cleanString());
+//					System.out.println(i + 1 + ". Account Number: " + b.getAccountNumber() + "    Account Balance: "
+//							+ b.getAccountBalance());
+				}
+			}
+
+			String choice = Main.input.nextLine();
+
+			if (choice.equals("back"))
+				return null;
+
+			long accountNumber = 0;
+
+			try {
+				accountNumber = Long.parseLong(choice);
+			} catch (Exception e) {
+				System.out.println("That input is invalid. Please only enter numbers or \"back\". ");
+			}
+
+			BankAccount accountToTransfer = findAccount(accountNumber);
+
+			if (accountToTransfer != null && accountToTransfer.equals(currentAccount)) {
+				System.out
+						.println("You can't transfer to the same account. You must type in a differnt account number.");
+				return null;
+			}
+
+			return accountToTransfer;
 		}
 	}
 
@@ -107,7 +183,7 @@ public class Employee extends User {
 			return null;
 		}
 
-		System.out.println("Please enter the number of the account that you would like to edit or 0 to go back: ");
+		System.out.println("Please enter the number of the account that you would like to edit or \"back\" to go back: ");
 		while (true) {
 			System.out.println();
 
@@ -117,22 +193,31 @@ public class Employee extends User {
 				System.out.println(i + 1 + ". " + b.cleanString());
 			}
 
-			int choice = Main.input.nextInt();
-			Main.input.nextLine();
+			String choice = Main.input.nextLine();
+			
 
-			if (choice == 0)
+			if (choice.equals("back") || choice.equals("quit"))
 				return null;
 
-			if (choice < 0 || choice > Main.accountList.size())
+			int index = 0;
+			try {
+				index = Integer.parseInt(choice);
+			}catch(Exception e) {
+				System.out.println("That input is invalid. Please be sure to input a number only or \"back\".");
+			}
+			
+			if (index <= 0 || index > Main.accountList.size())
 				System.out.println(
-						"That is not a valid number. Please enter the number of one of the available accounts or 0 to choose none.");
+						"That is not a valid number. Please enter the number of one of the available accounts or \"back\" to choose none.");
 			else
-				return Main.accountList.get(choice - 1);
+				return Main.accountList.get(index - 1);
 		}
 	}
 
 	// Employee can view all pending applications and approve or deny them
 	public void viewPendingApplications() {
+
+		ArrayList<Application> pendingApplications = new ArrayList<Application>();
 
 		while (true) {
 			int numPending = 0;
@@ -142,8 +227,9 @@ public class Employee extends User {
 			for (int i = 0; i < Main.applicationList.size(); i++) {
 				Application a = Main.applicationList.get(i);
 				if (a.getStatus() == StatusState.Pending) {
-					System.out.println(i + 1 + ". " + a);
+					pendingApplications.add(a);
 					numPending++;
+					System.out.println(numPending + ". " + a);
 				}
 			}
 
@@ -152,22 +238,31 @@ public class Employee extends User {
 				System.out.println();
 				return;
 			}
+			System.out.println();
 			System.out.print(
-					"Enter the number of the application you would like to approve or deny or enter 0 to quit: ");
+					"Enter the number of the application you would like to approve or deny or enter \"back\" to go back: ");
 
-			int index = Main.input.nextInt();
-			Main.input.nextLine();
+			String choice = Main.input.nextLine();
 
-			if (index == 0)
+			if (choice.equals("back"))
 				return;
 
+			int index = 0;
+			
+			try {
+			index = Integer.parseInt(choice);
+			}catch(Exception e) {
+				System.out.println("That input is invalid. Please only enter numbers or \"back\".");
+			}
+			
+			
 			if (index > Main.applicationList.size() || index < 0) {
 				System.out.println("That is not a valid application number. Please enter a different number. ");
 			} else {
 				// The current application to edit is the application from the list with the
 				// index that was entered minus one since the first application is actually 0
 				// index
-				Application a = Main.applicationList.get(index - 1);
+				Application a = pendingApplications.get(index - 1);
 
 				if (a.getStatus() != StatusState.Pending) {
 					System.out.println("The application number you entered has already been approved or denied.");
@@ -176,7 +271,7 @@ public class Employee extends User {
 				System.out.println("1. Approve");
 				System.out.println("2. Deny");
 
-				String choice = Main.input.nextLine();
+				choice = Main.input.nextLine();
 
 				switch (choice) {
 				case "quit":
@@ -204,6 +299,7 @@ public class Employee extends User {
 	@Override
 	public void showOptions() {
 		while (Main.currentUser == this) {
+			System.out.println();
 			System.out.println(
 					"Please enter the number of the choice you would like or type \"quit\" to return to user selection.");
 			System.out.println("1. View Pending Applications");
