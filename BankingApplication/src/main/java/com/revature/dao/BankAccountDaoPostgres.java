@@ -108,7 +108,7 @@ public class BankAccountDaoPostgres implements BankAccountDao {
 			ResultSet rs = stmt.executeQuery();
 			BankAccount account = null;
 
-			List<Customer> customers = customerDao.readCustomers(id);
+			List<Customer> customers = customerDao.readAccountCustomers(id);
 
 			if (rs.next() && customers != null) {
 				account = new BankAccount(id, customers.get(0), customers.get(1), rs.getLong(2), rs.getDouble(3));
@@ -137,7 +137,7 @@ public class BankAccountDaoPostgres implements BankAccountDao {
 
 			while (rs.next()) {
 				if (rs.getBoolean(4)) {
-					List<Customer> customers = customerDao.readCustomers(rs.getInt(1));
+					List<Customer> customers = customerDao.readAccountCustomers(rs.getInt(1));
 					BankAccount account = new BankAccount(rs.getInt(1), customers.get(0), customers.get(1),
 							rs.getLong(2), rs.getDouble(3));
 					accounts.add(account);

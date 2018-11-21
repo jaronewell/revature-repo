@@ -12,6 +12,8 @@ public interface CustomerDao {
 	
 	public List<Customer> readAll();
 	
-	public List<Customer> readCustomers(int accountID);
+	public List<Customer> readAccountCustomers(int accountID);
+
+	public List<Customer> readApplicationCustomers(int applicationID);
 	
 }

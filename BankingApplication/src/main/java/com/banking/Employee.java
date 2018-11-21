@@ -11,7 +11,13 @@ public class Employee extends User {
 	 */
 	private static final long serialVersionUID = 6421231273659462731L;
 	protected ArrayList<BankAccount> accessibleAccounts;
+	private int employeeID;
 
+	public Employee(int employeeID, String username, String password) {
+		this.setUsername(username);
+		this.setPassword(password);
+		this.setEmployeeID(employeeID);
+	}
 	public Employee(String username, String password) {
 		this.setUsername(username);
 		this.setPassword(password);
@@ -108,30 +114,10 @@ public class Employee extends User {
 					accountToEdit.transfer(amount, transferAccount);
 				break;
 			case "5":
-				System.out.println();
-				System.out.println("Account " + accountToEdit.getAccountNumber() + " has been cancelled.");
-				System.out.println();
-				JavaLog4j.logger.info("Account " + accountToEdit.getAccountNumber() + " has been cancelled.");
-				removeAccountFromCustomers(accountToEdit);
-				Main.accountDao.deactivate(accountToEdit);
-				Main.accountList.remove(accountToEdit);
-				Main.writeObject(Main.accountFile, Main.accountList);
+				accountToEdit.cancel();
 				return;
 			}
 		}
-	}
-
-	private void removeAccountFromCustomers(BankAccount accountToEdit) {
-		for (Customer customer : Main.customerList) {
-			if (accountToEdit.getCustomer().getUsername().equals(customer.getUsername())) {
-				customer.removeAccount(accountToEdit);
-			}
-			if (accountToEdit.getJointCustomer() != null
-					&& accountToEdit.getJointCustomer().getUsername().equals(customer.getUsername())) {
-				customer.removeAccount(accountToEdit);
-			}
-		}
-
 	}
 
 	private BankAccount chooseTransferAccount(BankAccount currentAccount) {
@@ -217,11 +203,12 @@ public class Employee extends User {
 	// Employee can view all pending applications and approve or deny them
 	public void viewPendingApplications() {
 
-		ArrayList<Application> pendingApplications = new ArrayList<Application>();
+		ArrayList<Application> pendingApplications;
 
 		while (true) {
 			int numPending = 0;
-
+			
+			pendingApplications = new ArrayList<Application>();
 			System.out.println();
 			System.out.println("Pending Applications");
 			for (int i = 0; i < Main.applicationList.size(); i++) {
@@ -264,10 +251,7 @@ public class Employee extends User {
 				// index
 				Application a = pendingApplications.get(index - 1);
 
-				if (a.getStatus() != StatusState.Pending) {
-					System.out.println("The application number you entered has already been approved or denied.");
-				} else
-					System.out.println(a);
+				System.out.println(a);
 				System.out.println("1. Approve");
 				System.out.println("2. Deny");
 
@@ -327,6 +311,14 @@ public class Employee extends User {
 			}
 		}
 
+	}
+
+	public int getEmployeeID() {
+		return employeeID;
+	}
+
+	public void setEmployeeID(int employeeID) {
+		this.employeeID = employeeID;
 	}
 
 }

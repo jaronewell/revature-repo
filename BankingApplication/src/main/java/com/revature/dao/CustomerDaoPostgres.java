@@ -62,7 +62,7 @@ public class CustomerDaoPostgres implements CustomerDao {
 	}
 
 	@Override
-	public List<Customer> readCustomers(int accountId) {
+	public List<Customer> readAccountCustomers(int accountId) {
 		String sql = "{call get_account_customers(?)}";
 		List<Customer> customerList = new ArrayList<Customer>();
 		customerList.add(null);
@@ -134,6 +134,54 @@ public class CustomerDaoPostgres implements CustomerDao {
 		}
 
 		return new ArrayList<Customer>();
+	}
+
+	@Override
+	public List<Customer> readApplicationCustomers(int applicationID) {
+		String sql = "{call get_application_customers(?)}";
+		List<Customer> customerList = new ArrayList<Customer>();
+		customerList.add(null);
+		customerList.add(null);
+
+		try {
+			conn.setAutoCommit(false);
+			CallableStatement cstmt = conn.prepareCall(sql);
+			cstmt.setInt(1, applicationID);
+			ResultSet rs = cstmt.executeQuery();
+			rs.next();
+
+			Object rs2 = rs.getObject(1);
+			int indexToSet = 0;
+			if (rs2 instanceof ResultSet) {
+				ResultSet resultSet = (ResultSet) rs2;
+				while (((ResultSet) rs2).next()) {
+					int id = resultSet.getInt(1);
+					String firstName = resultSet.getString(2);
+					String lastName = resultSet.getString(3);
+					String phoneNumber = resultSet.getString(4);
+					String address = resultSet.getString(5);
+					String email = resultSet.getString(6);
+					LocalDate dob = resultSet.getDate(7).toLocalDate();
+					String ssn = resultSet.getString(8);
+					String username = resultSet.getString(9);
+					String password = resultSet.getString(10);
+
+					
+					customerList.set(indexToSet, (new Customer(id, firstName, lastName, phoneNumber, address, email, dob, ssn,
+							username, password)));
+					indexToSet++;
+				}
+				resultSet.close();
+				conn.setAutoCommit(true);
+			}
+			return customerList;
+		} catch (SQLException e) {
+			System.out.println("There was a problem reading customers");
+			e.printStackTrace();
+
+		}
+		
+		return null;
 	}
 
 }

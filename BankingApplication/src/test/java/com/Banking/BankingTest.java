@@ -18,6 +18,14 @@ public class BankingTest {
 	}
 	
 	@Test
+	public void testWithrawTooMuch() {
+		BankAccount account = new BankAccount();
+		account.setAccountBalance(234);
+		account.withdraw(320);
+		assertEquals(234.0, account.getAccountBalance(), .001);
+	}
+	
+	@Test
 	public void testDeposit() {
 		BankAccount account = new BankAccount();
 		account.setAccountBalance(1234);

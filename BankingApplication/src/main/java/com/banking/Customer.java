@@ -170,6 +170,7 @@ public class Customer extends User {
 		}
 
 		Main.applicationList.add(newApplication);
+		Main.applicationDao.create(newApplication);
 		this.setPendingApplication(newApplication);
 
 		if (newApplication.getJointCustomer() != null) {

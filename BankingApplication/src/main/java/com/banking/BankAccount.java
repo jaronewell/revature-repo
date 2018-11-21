@@ -129,8 +129,10 @@ public class BankAccount implements Serializable {
 		}
 
 		accountBalance -= amount;
-		System.out.println("$" + df.format(amount) + " has been withdrawn from account " + accountNumber);
-		JavaLog4j.logger.info("$" + df.format(amount) + " has been withdrawn from account " + accountNumber);
+		String message = "$" + df.format(amount) + " has been withdrawn from account " + accountNumber;
+		System.out.println(message);
+		JavaLog4j.logger.info(message);
+		Main.logDao.create(message);
 		updateAccountList();
 	}
 
@@ -143,8 +145,10 @@ public class BankAccount implements Serializable {
 		}
 
 		accountBalance += amount;
-		System.out.println("$" + df.format(amount) + " has been deposited to account " + accountNumber + ".");
-		JavaLog4j.logger.info("$" + df.format(amount) + " has been deposited in account " + accountNumber);
+		String message = "$" + df.format(amount) + " has been deposited to account " + accountNumber + ".";
+		System.out.println(message);
+		JavaLog4j.logger.info(message);
+		Main.logDao.create(message);
 		updateAccountList();
 	}
 
@@ -162,8 +166,10 @@ public class BankAccount implements Serializable {
 
 		this.accountBalance -= amount;
 		account.accountBalance += amount;
-		System.out.println("$" + df.format(amount) + " has been transferred from account " + this.accountNumber + " to account " + account.accountNumber);
-		JavaLog4j.logger.info("$" + df.format(amount) + " has been transferred from account " + this.accountNumber + " to account " + account.accountNumber);
+		String message = "$" + df.format(amount) + " has been transferred from account " + this.accountNumber + " to account " + account.accountNumber;
+		System.out.println(message);
+		JavaLog4j.logger.info(message);
+		Main.logDao.create(message);
 		updateAccountList();
 		Main.accountDao.update(account);
 	}
@@ -180,5 +186,31 @@ public class BankAccount implements Serializable {
 	public void updateAccountList() {
 		Main.writeObject(Main.accountFile, Main.accountList);
 		Main.accountDao.update(this);
+	}
+
+	public void cancel() {
+		System.out.println();
+		String message = "Account " + getAccountNumber() + " has been cancelled.";
+		System.out.println(message);
+		System.out.println();
+		JavaLog4j.logger.info(message);
+		Main.logDao.create(message);
+		removeAccountFromCustomers();
+		Main.accountDao.deactivate(this);
+		Main.accountList.remove(this);
+		Main.writeObject(Main.accountFile, Main.accountList);
+	}
+	
+	private void removeAccountFromCustomers() {
+		for (Customer customer : Main.customerList) {
+			if (this.getCustomer().getUsername().equals(customer.getUsername())) {
+				customer.removeAccount(this);
+			}
+			if (this.getJointCustomer() != null
+					&& this.getJointCustomer().getUsername().equals(customer.getUsername())) {
+				customer.removeAccount(this);
+			}
+		}
+
 	}
 }

@@ -12,10 +12,16 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import com.banking.User.UserType;
+import com.revature.dao.ApplicationDao;
+import com.revature.dao.ApplicationDaoPostgres;
 import com.revature.dao.BankAccountDao;
 import com.revature.dao.BankAccountDaoPostgres;
 import com.revature.dao.CustomerDao;
 import com.revature.dao.CustomerDaoPostgres;
+import com.revature.dao.EmployeeDao;
+import com.revature.dao.EmployeeDaoPostgres;
+import com.revature.dao.LogDao;
+import com.revature.dao.LogDaoPostgres;
 
 public class Main {
 
@@ -25,9 +31,12 @@ public class Main {
 	public static ArrayList<Employee> employeeList;
 	public static ArrayList<BankAccount> accountList;
 	public static ArrayList<Application> applicationList;
+	
+	public static EmployeeDao employeeDao = new EmployeeDaoPostgres();
 	public static BankAccountDao accountDao = new BankAccountDaoPostgres();
 	public static CustomerDao customerDao = new CustomerDaoPostgres();
-	
+	public static ApplicationDao applicationDao = new ApplicationDaoPostgres();
+	public static LogDao logDao = new LogDaoPostgres();
 
 	static String customerFile = "./BankingCustomers.txt";
 	static String employeeFile = "./BankingEmployees.txt";
@@ -304,6 +313,7 @@ public class Main {
 		employeeList.add(e);
 		currentUser = e;
 		writeObject(employeeFile, employeeList);
+		employeeDao.create(e);
 	}
 
 	private static <T extends User> void login(ArrayList<T> userList) {
@@ -353,15 +363,20 @@ public class Main {
 
 	// Deserializes each list for customers, employees, admins, applications, and
 	// accounts or creates new empty list
-	@SuppressWarnings("unchecked")
+	
 	private static void initializeLists() {
-		customerList = (ArrayList<Customer>) readObject(customerFile);
-		employeeList = (ArrayList<Employee>) readObject(employeeFile);
-		applicationList = (ArrayList<Application>) readObject(applicationFile);
+		
+		//read from serialized files to assign array lists
+		//customerList = (ArrayList<Customer>) readObject(customerFile);
+		//employeeList = (ArrayList<Employee>) readObject(employeeFile);
+		//applicationList = (ArrayList<Application>) readObject(applicationFile);
 		//accountList = (ArrayList<BankAccount>) readObject(accountFile);
 		
+		//read from database to assign array lists
+		employeeList = (ArrayList<Employee>)employeeDao.readAll();
 		customerList = (ArrayList<Customer>)customerDao.readAll();
 		accountList = (ArrayList<BankAccount>) accountDao.readAll();
+		applicationList = (ArrayList<Application>)applicationDao.readAll();
 		
 		assignBankAccounts();
 	}

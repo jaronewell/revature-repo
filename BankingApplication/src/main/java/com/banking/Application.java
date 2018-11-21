@@ -18,7 +18,6 @@ public class Application implements Serializable {
 		this.customer = customer;
 	}
 
-	private boolean isJoint;
 	private Customer jointCustomer;
 	private StatusState status;
 
@@ -28,14 +27,18 @@ public class Application implements Serializable {
 
 	public Application(Customer customer) {
 		this.customer = customer;
-		this.isJoint = false;
 		this.jointCustomer = null;
 		setStatus(StatusState.Pending);
 	}
 
+	public Application(int applicationID, Customer customer1, Customer customer2) {
+		this.applicationID = applicationID;
+		this.customer = customer1;
+		this.jointCustomer = customer2;
+	}
+	
 	public Application(Customer customer1, Customer customer2) {
 		this.customer = customer1;
-		this.isJoint = true;
 		this.jointCustomer = customer2;
 		setStatus(StatusState.Pending);
 	}
@@ -43,10 +46,7 @@ public class Application implements Serializable {
 	public void approve() {
 		setStatus(StatusState.Approved);
 		BankAccount newAccount;
-		if (!isJoint)
-			newAccount = new BankAccount(customer);
-		else
-			newAccount = new BankAccount(customer, jointCustomer);
+		newAccount = new BankAccount(customer, jointCustomer);
 
 		// After the application is approved the new account is added to the list of
 		// accounts, the pending application is removed, and the user is notified of the approval
@@ -55,16 +55,18 @@ public class Application implements Serializable {
 		customer.setApplicationApproved(true);
 		
 		Main.accountDao.create(newAccount);
+		Main.logDao.create("Account " + newAccount.getAccountNumber() + " has been approved and is now active.");
 		
 		Main.accountList.add(newAccount);
 		Main.writeObject(Main.accountFile, Main.accountList);
 		
-		Main.writeObject(Main.applicationFile, Main.applicationList);
+		updateStatus();
+		
 		customer.setApplicationApproved(true);
 		
 		//If there is a joint customer the joint customer also adds the new account and the pending
 		//application is removed
-		if(isJoint) {
+		if(jointCustomer != null) {
 			jointCustomer.setApplicationApproved(true);
 			jointCustomer.addAccount(newAccount);
 			jointCustomer.setPendingApplication(null);
@@ -81,9 +83,14 @@ public class Application implements Serializable {
 
 	public void deny() {
 		setStatus(StatusState.Denied);
-		Main.writeObject(Main.applicationFile, Main.applicationList);
+		updateStatus();
 		
 		customer.setApplicationDenied(true);
+	}
+
+	private void updateStatus() {
+		Main.writeObject(Main.applicationFile, Main.applicationList);
+		Main.applicationDao.update(this);
 	}
 
 	public StatusState getStatus() {
@@ -92,13 +99,12 @@ public class Application implements Serializable {
 
 	public void setStatus(StatusState status) {
 		this.status = status;
-		Main.writeObject(Main.applicationFile, Main.applicationList);
 	}
 
 	@Override
 	public String toString() {
-		return "Application [customer=" + customer + ", isJoint=" + isJoint + ", jointCustomer=" + jointCustomer
-				+ ", status=" + status + "]";
+		return "Customer: " + customer.getFirstName() + " " + customer.getLastName() + ", jointCustomer: " + jointCustomer.getFirstName() + " " + jointCustomer.getLastName() 
+				+ ", status:" + status;
 	}
 
 	public int getApplicationID() {

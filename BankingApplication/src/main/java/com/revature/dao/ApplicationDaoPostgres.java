@@ -11,6 +11,7 @@ import com.banking.Application;
 import com.banking.Customer;
 import com.revature.util.ConnectionFactory;
 
+
 public class ApplicationDaoPostgres implements ApplicationDao {
 
 	private static Connection conn = ConnectionFactory.getConnectionFactory().createConnection();
@@ -66,10 +67,10 @@ public class ApplicationDaoPostgres implements ApplicationDao {
 	public void update(Application a) {
 		if (a != null) {
 			try {
-				String sql = "update application set applicationstatus = ? where applicationid = ?";
+				String status = a.getStatus().toString().toLowerCase();
+				String sql = "update application set applicationstatus = '" + status + "' where applicationid = ?";
 				PreparedStatement stmt = conn.prepareStatement(sql);
-				stmt.setString(1, a.getStatus().toString().toLowerCase());
-				stmt.setLong(2, a.getApplicationID());
+				stmt.setLong(1, a.getApplicationID());
 				stmt.executeUpdate();
 			} catch (SQLException e) {
 				System.out.println("Problem updating application");
@@ -93,8 +94,8 @@ public class ApplicationDaoPostgres implements ApplicationDao {
 
 			while (rs.next()) {
 
-				List<Customer> customers = customerDao.readCustomers(rs.getInt(1));
-				Application application = new Application(customers.get(0), customers.get(1));
+				List<Customer> customers = customerDao.readApplicationCustomers(rs.getInt(1));
+				Application application = new Application(rs.getInt(1), customers.get(0), customers.get(1));
 				switch(rs.getString(2)) {
 				case("pending"):
 					application.setStatus(Application.StatusState.Pending);

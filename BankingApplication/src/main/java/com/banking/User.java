@@ -9,7 +9,7 @@ public abstract class User implements Serializable {
 	 */
 	private static final long serialVersionUID = -3454272138700399244L;
 
-	enum UserType {
+	public enum UserType {
 		Customer, Employee, Admin
 	}
 
