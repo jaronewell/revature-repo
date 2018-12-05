@@ -1,0 +1,43 @@
+@charset "ISO-8859-1";
+
+.navbar{
+	background-color: dimgray;
+}
+
+textarea{
+	resize: none;
+}
+
+#passwordLabel{
+    margin-top: 10px;
+}
+
+.nav-item{
+    margin-left: 10px;
+}
+
+.form-group{
+    align-items: center;
+}
+
+label{
+    display: block;
+}
+
+textarea{
+    display: block;
+}
+
+h1{
+    color: black;
+    text-align: center
+}
+
+#signinform{
+	text-align: center; 
+	align-content: center; 
+	align-items: center; 
+	width: 200px; 
+	margin: 0 auto; 
+	margin-top:  70px;
+}

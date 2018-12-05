@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Reimbursement Management System</title>
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="../css/main.css">
+</head>
+<body>
+	<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+		<button class="navbar-toggler collapsed" aria-expanded="false"
+			aria-controls="navbarCollapse" aria-label="Toggle navigation"
+			type="button" data-toggle="collapse" data-target="#navbarCollapse">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<a class="navbar-brand" href="../login">TRMS</a>
+		<div class="navbar-collapse collapse" id="navbarCollapse">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item active"><a class="nav-link"
+					href="../requestform">Request Reimbursement</a></li>
+				<li class="nav-item"><a class="nav-link" href="../status">Check
+						Reimbursement Status</a></li>
+			</ul>
+			<form class="form-inline mt-2 mt-md-0" action="../login">
+				<button class="btn btn-outline-success" type="submit">Sign
+					In</button>
+			</form>
+		</div>
+	</nav>
+
+	<form  action="../requestform" method="post" style="width: 80%;  margin: 0 auto; margin-top: 50px;">
+		<h1 class="bd-title">Reimbursement Request Form</h1>
+		<div class="form-row">
+			<div class="col-md-4 mb-3">
+				<label for="validationDefault01">Start Date</label> <input
+					type="date" name="startDate" class="form-control" id="startDate" required>
+			</div>
+			<div class="col-md-4 mb-3">
+				<label for="validationDefault01">End Date</label> <input type="date"
+					class="form-control" name="endDate" id="endDate" required>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="inputAddress2">Event Address, City, State, Zip</label> 
+			<input type="text" name="location" class="form-control" id="location">
+		</div>
+
+		<div class="form-row">
+			<div class="form-group">
+				<label for="gradingFormat">Grading Format</label> <select
+					class="form-control" name="gradingFormat" id="gradingFormat">
+					<option>Graded</option>
+					<option>Presentation</option>
+				</select>
+			</div>
+			<div style="margin-left: 30px;" class="form-group">
+				<label for="eventType">Type of Event</label> <select
+					class="form-control" name="eventType" id="eventType">
+					<option>University Course (80%)</option>
+					<option>Seminar (60%)</option>
+					<option>Certification Preparation Classes (75%)</option>
+					<option>Certification (100%)</option>
+					<option>Technical Training (90%)</option>
+					<option>Other (30%)</option>
+				</select>
+			</div>
+			<div style="margin-left: 30px;" class="form-group">
+				<label>Cost of Event</label> <input type="number" step="0.01"
+					min="0" max="9999999" name="cost" class="form-control" id="cost" required>
+			</div>
+		</div>
+		<div class="form-row">
+			<div class="form-group">
+				<label for="description">Event Description</label>
+				<textarea rows="4" cols="50" name="description" id="description"
+					placeholder="Enter event description here" required></textarea>
+			</div>
+			<div style="margin-left: 50px;" class="form-group">
+				<label for="justification">Work Related Justification</label>
+				<textarea rows="4" cols="50" name="justification" id="justification" 
+					placeholder="Enter work related justification for event here."
+					required></textarea>
+			</div>
+		</div>
+		<div class="form-row">
+			<div class="form-group">
+				<label>Estimated number of work hours that will be missed.</label> <input
+					type="number" min="0" max="999" step="1" name="missedHours" id="missedHours" class="form-control"
+					required>
+			</div>
+			<div style="margin-left: 50px" class="form-group">
+				<label for="filesFormControl"> Relevant Files (Optional) </label> <input
+					type="file" id="filesFormControl" name="files" id="files" class="form-control-file"
+					multiple>
+			</div>
+		</div>
+		<div class="form-row">
+			<div style="margin-left: 50px" class="form-group">
+				<label for="preApprovalFormControl"> .msg File for
+					Preapproval (Optional) </label> <input type="file"
+					id="preApprovalFormControl" name="preApproval" id="preApproval" accept=".msg" class="form-control-file"
+					multiple>
+			</div>
+			<div>
+				<label for="approvalSelection">Type of preapproval (if file
+					uploaded)</label>
+				<div id="approvalSelection">
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="checkbox"
+							id="supervisorApproval" value="option1"> <label
+							class="form-check-label" for="inlineCheckbox1">Direct
+							Supervisor</label>
+					</div>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="checkbox"
+							id="departmentHeadAprroval" value="option2"> <label
+							class="form-check-label" for="inlineCheckbox2">Department
+							Head</label>
+					</div>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="checkbox" id="bencoApproval"
+							value="option3"> <label class="form-check-label"
+							for="inlineCheckbox3">BenCo</label>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<button class="btn btn-success" id="submitForm" type="submit"
+			style="margin-top: 20px; margin-bottom: 20px">Submit form</button>
+
+	</form>
+	<script type="text/javascript" src="../js/main.js"></script>
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+	<script
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+</body>
+</html>
