@@ -29,7 +29,7 @@ public class RequestServlet extends HttpServlet {
 		String path = request.getRequestURI();
 		ObjectMapper om = new ObjectMapper();
 		
-		System.out.println("In Request doGet");
+		System.out.println();
 		
 		if("/ReimbursementApplication/api/request".equals(path)) {
 			List<Request> requestList = rServ.readAllRequests();

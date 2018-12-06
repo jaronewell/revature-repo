@@ -8,28 +8,50 @@
 <link rel="stylesheet" type="text/css" href="../css/main.css">
 </head>
 <body>
-	<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-    <button class="navbar-toggler collapsed" aria-expanded="false" aria-controls="navbarCollapse" aria-label="Toggle navigation"
-        type="button" data-toggle="collapse" data-target="#navbarCollapse">
-        <span class="navbar-toggler-icon"></span>
-    </button><a class="navbar-brand" href="../login">TRMS</a>
-    <div class="navbar-collapse collapse" id="navbarCollapse">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="../requestform">Request Reimbursement</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link active" href="../status">Check Reimbursement Status</a>
-            </li>
-        </ul>
-        <form class="form-inline mt-2 mt-md-0" action="../login" method="get">
-          <button class="btn btn-outline-success" id="signinbutton" type="submit">Sign In</button>
-        </form>
-    </div>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <button class="navbar-toggler collapsed" aria-expanded="false" aria-controls="navbarCollapse" aria-label="Toggle navigation"
+            type="button" data-toggle="collapse" data-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button><a class="navbar-brand" href="../login">TRMS</a>
+        <div class="navbar-collapse collapse" id="navbarCollapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="../requestform">Request Reimbursement</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="../status">Check Reimbursement Status</a>
+                </li>
+            </ul>
+            <form class="form-inline mt-2 mt-md-0" action="../login" method="get">
+                <button class="btn btn-outline-success" id="signinbutton" type="submit">Sign In</button>
+            </form>
+        </div>
     </nav>
-    <div>
-    <button id="loadbutton">Load</button>
-	</div>
+    <div style="width: 80%;  margin: 0 auto; margin-top: 50px;">
+        <h1 class="bd-title">Pending Requests </h1>
+        <table id="pendingRequests" class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">First</th>
+                    <th scope="col">Last</th>
+                    <th scope="col">Request Date</th>
+                    <th scope="col">Event Type</th>
+                    <th scope="col">Start Date</th>
+                    <th scope="col">End Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">1</th>
+                    <td>Mark</td>
+                    <td>Otto</td>
+                    <td>@mdo</td>
+                  </tr>
+
+                </tbody>
+              </table>
+    </div>
     <script type="text/javascript" src="../js/status.js"></script>
 </body>
 </html>

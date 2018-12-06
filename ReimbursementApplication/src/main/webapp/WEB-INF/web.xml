@@ -61,7 +61,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>RequestServlet</servlet-name>
-    <url-pattern>/request</url-pattern>
-    <url-pattern>/request/*</url-pattern>
+    <url-pattern>/api/request</url-pattern>
+    <url-pattern>/api/request/*</url-pattern>
   </servlet-mapping>
 </web-app>

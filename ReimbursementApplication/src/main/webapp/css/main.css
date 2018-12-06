@@ -8,6 +8,10 @@ textarea{
 	resize: none;
 }
 
+.urgent{
+	color: red;
+}
+
 #passwordLabel{
     margin-top: 10px;
 }
