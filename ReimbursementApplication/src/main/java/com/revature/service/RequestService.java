@@ -2,6 +2,7 @@ package com.revature.service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,7 @@ import com.revature.pojos.Request.GradingFormat;
 public class RequestService {
 
 	RequestDao rDao = new RequestDaoPostgres();
+	EmployeeService eServ = new EmployeeService();
 	
 	public List<Request> readAllForEmployee(Employee emp) {
 		return rDao.readAllForEmployee(emp);
@@ -45,7 +47,7 @@ public class RequestService {
 		
 		int status = getStatus(request);
 		
-		Request req = new Request(0, emp.getEmployeeId(), LocalDate.now(), startDate, endDate, location, description, cost, gradingFormat, eventType, justification, status, "", missedHours);
+		Request req = new Request(0, emp, LocalDate.now(), startDate, endDate, location, description, cost, gradingFormat, eventType, justification, status, "", missedHours);
 		
 		System.out.println(req);
 		rDao.create(req);
@@ -112,6 +114,34 @@ public class RequestService {
 		}
 		
 		return type;
+	}
+
+	public List<Request> readAllForSupervisor(Employee sup) {
+		
+		List<Employee> employeeList = eServ.readAllUnderSupervisor(sup);
+		List<Request> requestList = new ArrayList<Request>();
+		
+		for(Employee emp : employeeList) {
+			
+			requestList.addAll(readAllForEmployee(emp));
+		}
+		
+		return requestList;
+		
+	}
+	
+	public List<Request> readAllForDepartmentHead(Employee head) {
+		
+		List<Employee> employeeList = eServ.readAllUnderDepartmentHead(head);
+		List<Request> requestList = new ArrayList<Request>();
+		
+		for(Employee emp : employeeList) {
+			
+			requestList.addAll(readAllForEmployee(emp));
+		}
+		
+		return requestList;
+		
 	}
 
 

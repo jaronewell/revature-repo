@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.revature.pojos.Employee;
+import com.revature.pojos.Employee.EmployeeType;
 import com.revature.service.RequestService;
 
 public class RequestFormServlet extends HttpServlet {
@@ -29,6 +30,9 @@ public class RequestFormServlet extends HttpServlet {
 		
 		if(username == null) {
 			response.sendRedirect("login");
+		}
+		else if(emp.getType() != EmployeeType.Employee) {
+			response.sendRedirect("status");
 		}
 		else {
 			response.sendRedirect("./html/requestreimbursement.html");

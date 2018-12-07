@@ -96,7 +96,6 @@ public class EmployeeDaoPostgres implements EmployeeDao {
 		return null;
 	}
 
-	
 	@Override
 	public Employee getSupervisorByEmployee(Employee emp) {
 		String sql = "select * from rmsemployee where employeeid = ?";
@@ -111,7 +110,7 @@ public class EmployeeDaoPostgres implements EmployeeDao {
 			}
 
 		} catch (SQLException e) {
-			System.out.println("Something went wrong when reading the accounts.");
+			System.out.println("Something went wrong when reading the supervisor.");
 			e.printStackTrace();
 		}
 		
@@ -132,6 +131,82 @@ public class EmployeeDaoPostgres implements EmployeeDao {
 
 		} catch (SQLException e) {
 			System.out.println("Something went wrong when reading the accounts.");
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+
+	@Override
+	public List<Employee> getEmployeesUnderSupervisor(Employee sup) {
+		
+		String sql = "select * from rmsemployee where supervisor = ?";
+		List<Employee> employees = new ArrayList<Employee>();
+
+		try {
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, sup.getEmployeeId());
+			ResultSet rs = stmt.executeQuery();
+
+			while (rs.next()) {
+				Employee employee = new Employee(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getInt(6), rs.getInt(7), Employee.EmployeeType.values()[rs.getInt(8)]);
+				
+				employees.add(employee);
+
+			}
+
+			return employees;
+
+		} catch (SQLException e) {
+			System.out.println("Something went wrong when reading the employees under supervisor.");
+			e.printStackTrace();
+		}
+
+		return new ArrayList<Employee>();
+	}
+
+	@Override
+	public List<Employee> getEmployeesUnderDepartmentHead(Employee head) {
+		
+		String sql = "select * from rmsemployee where departmenthead = ?";
+		List<Employee> employees = new ArrayList<Employee>();
+
+		try {
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, head.getEmployeeId());
+			ResultSet rs = stmt.executeQuery();
+
+			while (rs.next()) {
+				Employee employee = new Employee(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getInt(6), rs.getInt(7), Employee.EmployeeType.values()[rs.getInt(8)]);
+				
+				employees.add(employee);
+			}
+
+			return employees;
+
+		} catch (SQLException e) {
+			System.out.println("Something went wrong when reading the employees under supervisor.");
+			e.printStackTrace();
+		}
+
+		return new ArrayList<Employee>();
+	}
+
+	@Override
+	public Employee getEmployeeById(int id) {
+		String sql = "select * from rmsemployee where employeeid = ?";
+
+		try {
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, id);
+			ResultSet rs = stmt.executeQuery();
+
+			if (rs.next()) {
+				return new Employee(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getInt(6), rs.getInt(7), Employee.EmployeeType.values()[rs.getInt(8)]);
+			}
+
+		} catch (SQLException e) {
+			System.out.println("Something went wrong when reading employee by id.");
 			e.printStackTrace();
 		}
 		

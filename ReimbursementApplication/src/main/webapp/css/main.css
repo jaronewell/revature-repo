@@ -1,12 +1,18 @@
 @charset "ISO-8859-1";
 
+td{
+	text-align: center;
+	vertical-align: 50%;
+}
+
+.centered{
+	margin-top: 20px;
+}
+
 .navbar{
 	background-color: dimgray;
 }
 
-textarea{
-	resize: none;
-}
 
 .urgent{
 	color: red;
@@ -29,6 +35,7 @@ label{
 }
 
 textarea{
+    resize: none;
     display: block;
 }
 

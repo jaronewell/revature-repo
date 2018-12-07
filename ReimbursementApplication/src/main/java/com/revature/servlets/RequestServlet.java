@@ -7,10 +7,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.pojos.Employee;
+import com.revature.pojos.Employee.EmployeeType;
 import com.revature.pojos.Request;
 import com.revature.service.EmployeeService;
 import com.revature.service.RequestService;
@@ -40,13 +40,30 @@ public class RequestServlet extends HttpServlet {
 		else {
 			String username = path.substring(path.lastIndexOf('/')+1);
 			
+			List<Request> requestList;
+			
 			Employee emp = eServ.readEmployee(username);
-			List<Request> requestList = rServ.readAllForEmployee(emp);
+			if(emp.getType() == EmployeeType.Employee) {
+				
+				requestList = rServ.readAllForEmployee(emp);
+			}
+			else if(emp.getType() == EmployeeType.Supervisor) {
+				
+				requestList = rServ.readAllForSupervisor(emp);
+			}
+			else if(emp.getType() == EmployeeType.DepartmentHead) {
+				
+				requestList = rServ.readAllForDepartmentHead(emp);
+			}
+			else {
+				requestList = rServ.readAllRequests();
+			}
 			
 			String requestListJson = om.writeValueAsString(requestList);
 			
 			System.out.println(requestListJson);
 			response.getWriter().write(requestListJson);
+			
 		}
 	}
 

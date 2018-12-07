@@ -64,4 +64,14 @@
     <url-pattern>/api/request</url-pattern>
     <url-pattern>/api/request/*</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>ViewRequestServlet</display-name>
+    <servlet-name>ViewRequestServlet</servlet-name>
+    <servlet-class>com.revature.servlets.ViewRequestServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ViewRequestServlet</servlet-name>
+    <url-pattern>/view</url-pattern>
+  </servlet-mapping>
 </web-app>

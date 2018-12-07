@@ -12,6 +12,8 @@ public interface RequestDao {
 	public List<Request> readAllForEmployee(Employee emp);
 
 	public Request getRequestById(int requestId);
-
+	
+	public void updateRequest(Request req);
+	
 	public List<Request> readAll();
 }

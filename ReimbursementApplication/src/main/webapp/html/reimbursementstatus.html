@@ -23,7 +23,7 @@
                 </li>
             </ul>
             <form class="form-inline mt-2 mt-md-0" action="../login" method="get">
-                <button class="btn btn-outline-success" id="signinbutton" type="submit">Sign In</button>
+                <button class="btn btn-outline-success" id="signinbutton" type="submit">Sign Out</button>
             </form>
         </div>
     </nav>
@@ -39,18 +39,35 @@
                     <th scope="col">Event Type</th>
                     <th scope="col">Start Date</th>
                     <th scope="col">End Date</th>
+                    <th scope="col">Expected Reimbursement</th>
+                    <th scope="col">Status</th>
+                    <th scope="col"></th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                  </tr>
-
                 </tbody>
               </table>
+
+        <h1 class="bd-title">Approved/Rejected Requests </h1>
+        <table id="finishedRequests" class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">First</th>
+                    <th scope="col">Last</th>
+                    <th scope="col">Request Date</th>
+                    <th scope="col">Event Type</th>
+                    <th scope="col">Start Date</th>
+                    <th scope="col">End Date</th>
+                    <th scope="col">Awarded Reimbursement</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Comments</th>
+                </tr>
+            </thead>
+            <tbody>
+        
+            </tbody>
+        </table>
     </div>
     <script type="text/javascript" src="../js/status.js"></script>
 </body>

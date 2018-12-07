@@ -47,6 +47,26 @@ public class Employee {
 			return false;
 		}
 	}
+	
+	public Employee() {
+		
+	}
+	
+	public Employee(int employeeId, String firstName, String lastName, String username, String password,
+			int supervisorId, int departmentHeadId, double pendingReimbursements, double awardedReimbursements, String type) {
+		super();
+		this.employeeId = employeeId;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.username = username;
+		this.password = password;
+		this.supervisorId = supervisorId;
+		this.departmentHeadId = departmentHeadId;
+		this.pendingReimbursements = empService.getPendingReimbursements(this);
+		this.awardedReimbursements = empService.getAwardedReimbursements(this);
+		this.setType(EmployeeType.valueOf(type));
+	}
+	
 	public Employee(int employeeId, String firstName, String lastName, String username, String password,
 			int supervisorId, int departmentHeadId, EmployeeType type) {
 		super();
@@ -61,6 +81,7 @@ public class Employee {
 		this.awardedReimbursements = empService.getAwardedReimbursements(this);
 		this.setType(type);
 	}
+	
 	public int getEmployeeId() {
 		return employeeId;
 	}

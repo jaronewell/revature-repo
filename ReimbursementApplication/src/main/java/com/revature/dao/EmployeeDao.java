@@ -15,4 +15,10 @@ public interface EmployeeDao {
 	public Employee getSupervisorByEmployee(Employee emp);
 
 	public Employee getDepartmentHeadByEmployee(Employee emp);
+	
+	public List<Employee> getEmployeesUnderSupervisor(Employee sup);
+	
+	public List<Employee> getEmployeesUnderDepartmentHead(Employee head);
+
+	public Employee getEmployeeById(int id);
 }

@@ -9,7 +9,7 @@ public class Request {
 
 	@Override
 	public String toString() {
-		return "Request [requestId=" + requestId + ", employeeId=" + employeeId + ", requestDate=" + requestDate
+		return "Request [requestId=" + requestId + ", employee=" + employee + ", requestDate=" + requestDate
 				+ ", startDate=" + startDate + ", endDate=" + endDate + ", location=" + location + ", description="
 				+ description + ", cost=" + cost + ", format=" + format + ", type=" + type + ", justification="
 				+ justification + ", status=" + status + ", comments=" + comments + ", isUrgent=" + isUrgent
@@ -57,7 +57,7 @@ public class Request {
 	
 	private int requestId;
 	  
-	private int employeeId;
+	private Employee employee;
 	
 	private LocalDate requestDate;
 	
@@ -89,12 +89,16 @@ public class Request {
 	
 	private int missedHours;
 
-	public Request(int requestId, int employeeId, LocalDate requestDate, LocalDate startDate, LocalDate endDate,
+	public Request() {
+		
+	}
+	
+	public Request(int requestId, Employee employee, LocalDate requestDate, LocalDate startDate, LocalDate endDate,
 			String location, String description, double cost, GradingFormat format, EventType type,
 			String justification, int status, String comments, int missedHours) {
 		super();
 		this.requestId = requestId;
-		this.employeeId = employeeId;
+		this.employee = employee;
 		this.requestDate = requestDate;
 		this.startDate = startDate;
 		this.endDate = endDate;
@@ -134,12 +138,12 @@ public class Request {
 		this.requestId = requestId;
 	}
 
-	public int getEmployeeId() {
-		return employeeId;
+	public Employee getEmployee() {
+		return employee;
 	}
 
-	public void setEmployeeId(int employeeId) {
-		this.employeeId = employeeId;
+	public void setEmployee(Employee emp) {
+		this.employee = employee;
 	}
 
 	public LocalDate getRequestDate() {

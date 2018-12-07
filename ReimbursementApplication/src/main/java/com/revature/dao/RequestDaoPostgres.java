@@ -18,7 +18,8 @@ import com.revature.util.ConnectionFactory;
 public class RequestDaoPostgres implements RequestDao {
 
 	Connection conn = ConnectionFactory.getConnectionFactory().createConnection();
-
+	EmployeeDao eDao = new EmployeeDaoPostgres();
+	
 	@Override
 	public void create(Request req) {
 		System.out.println("in RequestDao create");
@@ -26,7 +27,7 @@ public class RequestDaoPostgres implements RequestDao {
 			try {
 				String sql = "insert into reimbursementrequest (employeeid, requestdate, startdate, enddate, location, description, cost, gradingformatid, typeid, justification, status, comments, awardedamount, missedhours) values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 				PreparedStatement stmt = conn.prepareStatement(sql);
-				stmt.setInt(1, req.getEmployeeId());
+				stmt.setInt(1, req.getEmployee().getEmployeeId());
 				stmt.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
 				stmt.setTimestamp(3, Timestamp.valueOf(req.getStartDate().atStartOfDay()));
 				stmt.setTimestamp(4, Timestamp.valueOf(req.getEndDate().atStartOfDay()));
@@ -72,9 +73,11 @@ public class RequestDaoPostgres implements RequestDao {
 
 			while (rs.next()) {
 
-				GradingFormat format = GradingFormat.values()[rs.getInt(9)];
-				EventType type = EventType.values()[rs.getInt(10)];
-				Request request = new Request(rs.getInt(1), rs.getInt(2), rs.getDate(3).toLocalDate(),
+				Employee emp = eDao.getEmployeeById(rs.getInt(2));
+				GradingFormat format = GradingFormat.values()[rs.getInt(9) - 1];
+				EventType type = EventType.values()[rs.getInt(10) - 1];
+				
+				Request request = new Request(rs.getInt(1), emp, rs.getDate(3).toLocalDate(),
 						rs.getDate(4).toLocalDate(), rs.getDate(5).toLocalDate(), rs.getString(6), rs.getString(7),
 						rs.getDouble(8), format, type, rs.getString(11), rs.getInt(12), rs.getString(13), rs.getInt(14));
 
@@ -104,9 +107,10 @@ public class RequestDaoPostgres implements RequestDao {
 
 			while (rs.next()) {
 
-				GradingFormat format = GradingFormat.values()[rs.getInt(9)];
-				EventType type = EventType.values()[rs.getInt(10)];
-				Request request = new Request(rs.getInt(1), rs.getInt(2), rs.getDate(3).toLocalDate(),
+				GradingFormat format = GradingFormat.values()[rs.getInt(9) - 1];
+				EventType type = EventType.values()[rs.getInt(10) - 1];
+				
+				Request request = new Request(rs.getInt(1), emp, rs.getDate(3).toLocalDate(),
 						rs.getDate(4).toLocalDate(), rs.getDate(5).toLocalDate(), rs.getString(6), rs.getString(7),
 						rs.getDouble(8), format, type, rs.getString(11), rs.getInt(12), rs.getString(13), rs.getInt(14));
 
@@ -135,9 +139,11 @@ public class RequestDaoPostgres implements RequestDao {
 
 			if (rs.next()) {
 				
+				Employee emp = eDao.getEmployeeById(rs.getInt(2));
 				GradingFormat format = GradingFormat.values()[rs.getInt(9)];
 				EventType type = EventType.values()[rs.getInt(10)];
-				return new Request(rs.getInt(1), rs.getInt(2), rs.getDate(3).toLocalDate(),
+				
+				return new Request(rs.getInt(1), emp, rs.getDate(3).toLocalDate(),
 						rs.getDate(4).toLocalDate(), rs.getDate(5).toLocalDate(), rs.getString(6), rs.getString(7),
 						rs.getDouble(8), format, type, rs.getString(11), rs.getInt(12), rs.getString(13), rs.getInt(14));
 			}
@@ -148,6 +154,27 @@ public class RequestDaoPostgres implements RequestDao {
 		}
 
 		return null;
+	}
+
+	@Override
+	public void updateRequest(Request req) {
+		
+		String sql = "update reimbursementrequest set awardedamount = ?, status = ?, comments = ? where requestid = ?";
+
+		try {
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			stmt.setDouble(1, req.getAwardedAmount());
+			stmt.setInt(2, req.getStatus());
+			stmt.setString(3, req.getComments());
+			stmt.setInt(4, req.getRequestId());
+			stmt.executeUpdate();
+
+
+		} catch (SQLException e) {
+			System.out.println("Something went wrong when trying to update the request.");
+			e.printStackTrace();
+		}
+		
 	}
 
 }

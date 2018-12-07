@@ -19,18 +19,39 @@ function getRequests(employee){
     xhr.send();
 }
 
-function createRequestElement(req, employee){
-	
+function getRequestsToApprove(employee){
+
+    let xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = function() {
+
+        if(xhr.readyState === 4 && xhr.status === 200){
+            let requestList = JSON.parse(xhr.responseText);
+            for (let i = 0; i < requestList.length; i++){
+                let req = requestList[i]
+                
+                createRequestElement(req, employee);
+            }
+        }
+    }
+
+    xhr.open("GET", "../api/request/" + employee.username, true);
+
+    xhr.send();
+}
+
+function createRequestElement(req){
+    
 	let tr = document.createElement("tr");
     let th = document.createElement("th");
     th.setAttribute("scope", "row");
     th.innerHTML=req.requestId;
 
     let first = document.createElement("td");
-    first.innerHTML=employee.firstName;
+    first.innerHTML=req.employee.firstName;
 
     let last = document.createElement("td");
-    last.innerHTML=employee.lastName;
+    last.innerHTML=req.employee.lastName;
 
     let rdate = document.createElement("td");
     rdate.innerHTML=dateToString(req.requestDate);
@@ -50,28 +71,79 @@ function createRequestElement(req, employee){
         tr.setAttribute('style', 'color: red ');
     }
     
-    // switch(req.status){
-    //     case 0:
-    //         t.appendData( " Waiting for supervisor approval");
-    //         break;
-    //     case 1:
-    //         t.appendData( " Waiting for department head approval");
-    //         break;
-    //     case 2:
-    //         t.appendData( " Waiting for Benco approval");
-    //         break;
-    //     case 3:
-    //         t.appendData( " Waiting for final grades approval");
-    //         break;
-    // }
+    let amount = document.createElement("td");
+    amount.innerHTML = '$' + req.expectedAmount;
+
+    let status = document.createElement("td");
+
+    switch(req.status){
+        case -1:
+            status.innerHTML="Rejected";
+            break;
+        case 0:
+            status.innerHTML="Waiting for supervisor approval";
+            break;
+        case 1:
+            status.innerHTML="Waiting for department head approval";
+            break;
+        case 2:
+            status.innerHTML="Waiting for Benco approval";
+            break;
+        case 3:
+            status.innerHTML="Waiting for final grades approval";
+            break;
+        case 4:
+            status.innerHTML="Approved";
+            break;
+    }
     
-    tr.append(th, first, last, rdate, etype, sdate, edate);
-    document.getElementById("pendingRequests").appendChild(tr);
+
+    tr.append(th, first, last, rdate, etype, sdate, edate, amount, status);
+    
+    if(req.status === -1 || req.status === 4){
+        amount.innerHTML = '$' + req.awardedAmount;
+        
+        let comments = document.createElement("td");
+        comments.innerHTML = req.comments;
+        
+        tr.append(comments);
+        document.getElementById("finishedRequests").appendChild(tr);
+
+    }
+    else{
+        
+        let b = document.createElement("button");
+        b.innerHTML = "View";
+        b.setAttribute('class', 'btn btn-success centered');
+        b.addEventListener("click", function(event){
+            viewRequest(req);
+        })
+    
+        tr.append(b);
+
+        document.getElementById("pendingRequests").appendChild(tr);
+
+    }
+}
+
+function viewRequest(req){
+
+    let xhr = new XMLHttpRequest();
+    
+    if(xhr.readyState === 4 && xhr.status === 201){
+        let url = JSON.parse(xhr.responseText);
+        console.log("in relocation");
+        window.location = "./viewrequest.html";
+    }
+
+    xhr.open("POST", "../status", true);
+
+    xhr.send(JSON.stringify(req.requestId));
 }
 
 function dateToString(date){
 	
-	return date.month + " " + date.dayOfMonth + " " + date.year;
+	return date.monthValue + "/" + date.dayOfMonth + "/" + date.year;
 }
 
 function getCurrentEmployee(){
@@ -86,7 +158,9 @@ function getCurrentEmployee(){
 	            if(!(employee === null)){
                     document.getElementById("signinbutton").innerText = "Sign Out";
 
-    	            getRequests(employee);
+
+                    getRequests(employee);
+                    
 	            }
 	        }
 	    }
@@ -98,6 +172,6 @@ function getCurrentEmployee(){
 
 
 window.onload = function() {
-    
+   
    getCurrentEmployee();
 }

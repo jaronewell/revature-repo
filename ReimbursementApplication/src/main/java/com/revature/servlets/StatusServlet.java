@@ -7,7 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.pojos.Employee;
+import com.revature.pojos.Request;
 
 /**
  * Servlet implementation class StatusServlet
@@ -47,8 +49,16 @@ public class StatusServlet extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+
+		ObjectMapper om = new ObjectMapper();
+		
+		String reqJson = request.getReader().readLine();
+		System.out.println(reqJson);
+		Integer reqId = om.readValue(reqJson, Integer.class);
+		request.getSession().setAttribute("requestId", reqId);
+		
+		response.setStatus(201);
+		
 	}
 
 }

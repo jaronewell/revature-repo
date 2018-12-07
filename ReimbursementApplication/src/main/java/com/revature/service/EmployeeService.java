@@ -53,4 +53,14 @@ public class EmployeeService {
 		
 		return awardedReimbursements;
 	}
+	
+	public List<Employee> readAllUnderSupervisor(Employee sup){
+		
+		return eDao.getEmployeesUnderSupervisor(sup);
+	}
+	
+	public List<Employee> readAllUnderDepartmentHead(Employee head){
+		
+		return eDao.getEmployeesUnderDepartmentHead(head);
+	}
 }
