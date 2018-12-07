@@ -79,7 +79,7 @@ public class RequestDaoPostgres implements RequestDao {
 				
 				Request request = new Request(rs.getInt(1), emp, rs.getDate(3).toLocalDate(),
 						rs.getDate(4).toLocalDate(), rs.getDate(5).toLocalDate(), rs.getString(6), rs.getString(7),
-						rs.getDouble(8), format, type, rs.getString(11), rs.getInt(12), rs.getString(13), rs.getInt(14));
+						rs.getDouble(8), format, type, rs.getString(11), rs.getInt(12), rs.getString(13), rs.getInt(14), rs.getInt(15));
 
 				requests.add(request);
 
@@ -112,7 +112,7 @@ public class RequestDaoPostgres implements RequestDao {
 				
 				Request request = new Request(rs.getInt(1), emp, rs.getDate(3).toLocalDate(),
 						rs.getDate(4).toLocalDate(), rs.getDate(5).toLocalDate(), rs.getString(6), rs.getString(7),
-						rs.getDouble(8), format, type, rs.getString(11), rs.getInt(12), rs.getString(13), rs.getInt(14));
+						rs.getDouble(8), format, type, rs.getString(11), rs.getInt(12), rs.getString(13), rs.getInt(14), rs.getInt(15));
 
 				requests.add(request);
 
@@ -131,7 +131,6 @@ public class RequestDaoPostgres implements RequestDao {
 	@Override
 	public Request getRequestById(int requestId) {
 		String sql = "select * from reimbursementrequest where requestid = ?";
-
 		try {
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setInt(1, requestId);
@@ -140,12 +139,12 @@ public class RequestDaoPostgres implements RequestDao {
 			if (rs.next()) {
 				
 				Employee emp = eDao.getEmployeeById(rs.getInt(2));
-				GradingFormat format = GradingFormat.values()[rs.getInt(9)];
-				EventType type = EventType.values()[rs.getInt(10)];
+				GradingFormat format = GradingFormat.values()[rs.getInt(9) - 1];
+				EventType type = EventType.values()[rs.getInt(10) - 1];
 				
 				return new Request(rs.getInt(1), emp, rs.getDate(3).toLocalDate(),
 						rs.getDate(4).toLocalDate(), rs.getDate(5).toLocalDate(), rs.getString(6), rs.getString(7),
-						rs.getDouble(8), format, type, rs.getString(11), rs.getInt(12), rs.getString(13), rs.getInt(14));
+						rs.getDouble(8), format, type, rs.getString(11), rs.getInt(12), rs.getString(13), rs.getInt(14), rs.getInt(15));
 			}
 
 		} catch (SQLException e) {

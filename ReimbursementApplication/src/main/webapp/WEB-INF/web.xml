@@ -74,4 +74,14 @@
     <servlet-name>ViewRequestServlet</servlet-name>
     <url-pattern>/view</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>SubmitGradesServlet</display-name>
+    <servlet-name>SubmitGradesServlet</servlet-name>
+    <servlet-class>com.revature.servlets.SubmitGradesServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SubmitGradesServlet</servlet-name>
+    <url-pattern>/grades</url-pattern>
+  </servlet-mapping>
 </web-app>

@@ -48,6 +48,8 @@ public class RequestFormServlet extends HttpServlet {
 		
 		System.out.println("In RequestForm doPost Employee: " + emp);
 		rServ.makeRequest(request, emp);
+		
+		response.sendRedirect("./html/reimbursementstatus.html");
 	}
 
 }

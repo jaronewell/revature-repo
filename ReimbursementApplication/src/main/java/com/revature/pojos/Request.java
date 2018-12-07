@@ -95,7 +95,7 @@ public class Request {
 	
 	public Request(int requestId, Employee employee, LocalDate requestDate, LocalDate startDate, LocalDate endDate,
 			String location, String description, double cost, GradingFormat format, EventType type,
-			String justification, int status, String comments, int missedHours) {
+			String justification, int status, String comments, int awardedAmount, int missedHours) {
 		super();
 		this.requestId = requestId;
 		this.employee = employee;
@@ -110,7 +110,8 @@ public class Request {
 		this.justification = justification;
 		this.status = status;
 		this.comments = comments;
-		this.setMissedHours(missedHours);
+		this.awardedAmount = awardedAmount;
+		this.missedHours = missedHours;
 		
 		if(ChronoUnit.DAYS.between(startDate, endDate) <= 14) {
 			this.isUrgent = true;

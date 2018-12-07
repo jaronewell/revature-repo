@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Reimbursement Management System</title>
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="../css/main.css">
+</head>
+<body>
+	<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+		<button class="navbar-toggler collapsed" aria-expanded="false"
+			aria-controls="navbarCollapse" aria-label="Toggle navigation"
+			type="button" data-toggle="collapse" data-target="#navbarCollapse">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<a class="navbar-brand" href="../login">TRMS</a>
+		<div class="navbar-collapse collapse" id="navbarCollapse">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item"><a class="nav-link" href="../requestform">Request
+						Reimbursement</a></li>
+				<li class="nav-item"><a class="nav-link active"
+					href="../status">Check Reimbursement Status</a></li>
+			</ul>
+			<form class="form-inline mt-2 mt-md-0" action="../login" method="get">
+				<h6 style="color: white; margin-right: 20px; margin-top: 10px"
+					id="username"></h6>
+				<button class="btn btn-outline-success" type="submit">SignOut</button>
+			</form>
+		</div>
+	</nav>
+
+	<form action="../grades" method="post" enctype="multipart/form-data">
+		<div
+			style="width: 40%; margin: 0 auto; margin-top: 50px; text-align: center;">
+			<h1 class="bd-title">Grade Submission</h1>
+			<div class="form-row">
+				<label style="text-align: center;" for="preApprovalFormControl">
+					Submit final grade or presentation here </label> <input type="file"
+					id="gradeFile" name="gradeFile" class="form-control-file" required>
+			</div>
+
+			
+			<button class="btn btn-success" id="approvebtn" type="submit"
+				style="margin-top: 20px; margin-bottom: 20px; margin-right: 20px">Submit</button>
+		</div>
+	</form>
+
+
+	<script type="text/javascript" src="../js/submitgrades.js"></script>
+</body>
+</html>

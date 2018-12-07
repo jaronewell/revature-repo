@@ -57,8 +57,6 @@ public class StatusServlet extends HttpServlet {
 		Integer reqId = om.readValue(reqJson, Integer.class);
 		request.getSession().setAttribute("requestId", reqId);
 		
-		response.setStatus(201);
-		
 	}
 
 }

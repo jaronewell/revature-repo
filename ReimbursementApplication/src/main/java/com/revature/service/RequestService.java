@@ -47,7 +47,7 @@ public class RequestService {
 		
 		int status = getStatus(request);
 		
-		Request req = new Request(0, emp, LocalDate.now(), startDate, endDate, location, description, cost, gradingFormat, eventType, justification, status, "", missedHours);
+		Request req = new Request(0, emp, LocalDate.now(), startDate, endDate, location, description, cost, gradingFormat, eventType, justification, status, "", 0, missedHours);
 		
 		System.out.println(req);
 		rDao.create(req);
@@ -142,6 +142,11 @@ public class RequestService {
 		
 		return requestList;
 		
+	}
+
+	public void updateRequest(Request req) {
+
+		rDao.updateRequest(req);		
 	}
 
 
